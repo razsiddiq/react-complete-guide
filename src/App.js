@@ -1,8 +1,18 @@
 import React, { Component } from 'react';
 import './App.css';
+//import Radium, {StyleRoot} from 'radium';
+import styled from 'styled-components';
 import Person from './Person/Person';
 
-
+const ButtonStyled  = styled.button`
+        border-color:${props=> props.alt ? 'red' : 'green'};
+        background-color:${props=> props.alt ? 'red' : 'green'};
+        padding:5px;
+        color:white;
+        &:hover {
+          background-color:${props=> props.alt ? 'salmon' : 'salmon'};
+        }
+`;
 class App extends Component {
   state = {
     persons:[
@@ -66,8 +76,26 @@ class App extends Component {
 
     const style = {
       borderColor:'red',
-      padding:'5px'
+      backgroundColor:'red',
+      padding:'5px',
+      color:'white',
+      ':hover':{
+        backgroundColor:'salmon',
+      }
     }
+
+    const classes = [];
+
+    if(this.state.persons.length <=2){
+      classes.push('red');
+    }
+
+    
+    if(this.state.persons.length <=1){
+      classes.push('bold');
+    }
+
+    
 
     let person = null;
 
@@ -96,13 +124,18 @@ class App extends Component {
         </div>     
                  
       );
+
+      // style.backgroundColor='green';
+      // style[':hover'] = {
+      //   backgroundColor :'lightgreen'
+      // }
     }
 
     return (
       <div className="App">
-        <h1>Hi I am here</h1>
+        <h1 className={classes.join(' ')}>Hi I am here</h1>
         {/* <button style={style} onClick={this.clickHandler.bind(this,'myname')}>Click Here</button> */}
-        <button style={style} onClick={this.toggleHandler}>Toggle Person</button>
+        <ButtonStyled alt={this.state.toggle} onClick={this.toggleHandler}>Toggle Person</ButtonStyled>
         {person}
         {/* { this.state.toggle ?
             <div>
@@ -110,8 +143,7 @@ class App extends Component {
              <Person click={() => this.clickHandler('newname')} name={this.state.persons[1].name} age = {this.state.persons[1].age}>adsfasdf</Person>
              <Person name={this.state.persons[2].name} age = {this.state.persons[2].age}/>
            </div> : null
-        } */}
-       
+        } */}  
         
       </div>
     );
@@ -120,8 +152,8 @@ class App extends Component {
   }
 }
 
+//export default Radium(App);
 export default App;
-
 
 /*import React, { Component } from 'react';
 import './App.css';
