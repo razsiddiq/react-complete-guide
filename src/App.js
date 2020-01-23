@@ -1,18 +1,26 @@
 import React, { Component } from 'react';
 import classes from './App.css';
 //import Radium, {StyleRoot} from 'radium';
-import styled from 'styled-components';
+//import styled from 'styled-components';
 import Person from './Person/Person';
+//import WithClass from './hoc/WithClass_bk';
 
-const ButtonStyled  = styled.button`
-        border-color:${props=> props.alt ? 'red' : 'green'};
-        background-color:${props=> props.alt ? 'red' : 'green'};
-        padding:5px;
-        color:white;
-        &:hover {
-          background-color:${props=> props.alt ? 'salmon' : 'salmon'};
-        }
-`;
+
+import Aux from './hoc/Auxiliary/Auxiliary';
+import withClass from './hoc/withClass';
+import Cockpit from './Components/Cockpit/Cockpit';
+// const ButtonStyled  = styled.button`
+//         border-color:${props=> props.alt ? 'red' : 'green'};
+//         background-color:${props=> props.alt ? 'red' : 'green'};
+//         padding:5px;
+//         color:white;
+//         &:hover {
+//           background-color:${props=> props.alt ? 'salmon' : 'salmon'};
+//         }
+// `;
+
+export const AuthContext = React.createContext(false);
+
 class App extends Component {
   state = {
     persons:[
@@ -20,7 +28,9 @@ class App extends Component {
       { id: 'fi2', name:'sia',age:190 },
       { id: 'fi3', name:'sig',age:109 }
     ],
-    toggle: false
+    toggle: false,
+    toggleClicked: 0,
+    authenticated : false
   };
 
   /*clickHandler = (newname) =>{
@@ -59,7 +69,12 @@ class App extends Component {
   toggleHandler = () =>{
 
     const displayBtn = this.state.toggle;
-    this.setState({toggle: !displayBtn})
+    this.setState((prevState, props) => {
+      return {
+        toggle: !displayBtn,
+        toggleClicked : prevState.toggleClicked + 1
+      }
+    })
   }
 
   deleteHandler = (personIndex) => {
@@ -71,29 +86,40 @@ class App extends Component {
       this.setState({persons:persons});
 
   }
+
+  loginHanlder = () =>{
+    this.setState({authenticated:true});
+  }
+
+  // shouldComponentUpdate( nextProps, nextState ){
+  //   console.log('Inside Shoudl componente update');
+
+  //   return nextProps.persons !== this.props.persons || nextProps.changed !== this.props.changed || nextProps.clicked !== this.props.click;
+
+  // }
  
   render() {
 
-    const style = {
-      borderColor:'red',
-      backgroundColor:'red',
-      padding:'5px',
-      color:'white',
-      ':hover':{
-        backgroundColor:'salmon',
-      }
-    }
+    // const style = {
+    //   borderColor:'red',
+    //   backgroundColor:'red',
+    //   padding:'5px',
+    //   color:'white',
+    //   ':hover':{
+    //     backgroundColor:'salmon',
+    //   }
+    // }
 
-    const assignedClasses = [];
+    // const assignedClasses = [];
 
-    if(this.state.persons.length <=2){
-      assignedClasses.push('red');
-    }
+    // if(this.state.persons.length <=2){
+    //   assignedClasses.push('red');
+    // }
 
     
-    if(this.state.persons.length <=1){
-      assignedClasses.push('bold');
-    }
+    // if(this.state.persons.length <=1){
+    //   assignedClasses.push('bold');
+    // }
 
     
 
@@ -113,7 +139,7 @@ class App extends Component {
           {
             this.state.persons.map( (person, index) => {
               return <Person 
-              key={person.id}              
+              key={person.id}           
               click = {() => this.deleteHandler(index)}
               name={person.name} 
               age = {person.age}
@@ -132,11 +158,17 @@ class App extends Component {
     }
 
     return (
-      <div className={classes.App}>
-        <h1 className={assignedClasses.join(' ')}>Hi I am here</h1>
-        {/* <button style={style} onClick={this.clickHandler.bind(this,'myname')}>Click Here</button> */}
-        <ButtonStyled alt={this.state.toggle} onClick={this.toggleHandler}>Toggle Person</ButtonStyled>
-        {person}
+      //<WithClass classes={classes.App}>
+      <Aux>
+        
+        
+        <Cockpit personLength={this.state.persons.length} toggle={this.toggleHandler} login={this.loginHanlder}/>
+        <AuthContext.Provider value={this.state.authenticated}>
+          {person}
+        </AuthContext.Provider>
+
+
+
         {/* { this.state.toggle ?
             <div>
              <Person change={this.changeHandler} name={this.state.persons[0].name} age = {this.state.persons[0].age}/>
@@ -144,8 +176,8 @@ class App extends Component {
              <Person name={this.state.persons[2].name} age = {this.state.persons[2].age}/>
            </div> : null
         } */}  
-        
-      </div>
+        </Aux>
+     // </WithClass>
     );
 
     //return React.createElement('div', {className:'App'}, React.createElement('h1',null,'Hi I am here'));
@@ -153,7 +185,7 @@ class App extends Component {
 }
 
 //export default Radium(App);
-export default App;
+export default withClass(App,classes.App);
 
 /*import React, { Component } from 'react';
 import './App.css';
